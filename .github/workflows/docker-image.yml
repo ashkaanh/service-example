@@ -6,7 +6,6 @@ on:
 
 env:
   IMAGE_NAME: myapp
-  TAG: $GITHUB_RUN_ID
   DOCKER_USERNAME: ${{ secrets.CONTAINER_REGISTRY_USER }}
   DOCKER_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }} 
 
@@ -16,12 +15,14 @@ jobs:
     environment: ContainerRegistry
     
     steps:
-    - name: Docker build
+    - name: Find
       run: |
         find . -name kubelinter-config.yaml
+    - name: Docker build
+      run: |
         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        docker build -t $IMAGE_NAME:$TAG app
-        docker push $IMAGE_NAME:$TAG
+        docker build -t $IMAGE_NAME:$GITHUB_RUN_ID app
+        docker push $IMAGE_NAME:$GITHUB_RUN_ID
 
   scan:
     runs-on: ubuntu-latest
@@ -33,8 +34,8 @@ jobs:
         echo $TRIVY_VERSION
         wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        docker pull $IMAGE_NAME:$TAG
-        trivy image --exit-code 0 --no-progress $IMAGE_NAME:$TAG
+        docker pull $IMAGE_NAME:$GITHUB_RUN_ID
+        trivy image --exit-code 0 --no-progress $IMAGE_NAME:$GITHUB_RUN_ID
 
     - name: Kube-linter scan
       run: |
