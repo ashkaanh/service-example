@@ -35,4 +35,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Kube-linter scan
       run: |
+        ls -la /home/runner/work/service-example
+        ls -la /home/runner/work/service-example/service-example
+        ls -la /home/runner/work/service-example/service-example/k8s
         docker run -v /home/runner/work/service-example/service-example/kubelinter-config.yaml:/etc/config.yaml -v /home/runner/work/service-example/service-example/k8s:/dir stackrox/kube-linter lint /dir --config /etc/config.yaml || true
