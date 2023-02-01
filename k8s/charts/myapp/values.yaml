@@ -5,12 +5,13 @@
 replicaCount: 3
 
 image:
-  repository: myapp
+  repository: ghcr.io/ashkaanh/service-example
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.7"
+  tag: "4066922477"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: myregcred
 nameOverride: ""
 fullnameOverride: ""
 
@@ -28,7 +29,7 @@ podAnnotations: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
   # capabilities:
   #   drop:
   #   - ALL
@@ -56,7 +57,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
