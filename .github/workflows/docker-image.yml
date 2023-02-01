@@ -22,17 +22,6 @@ jobs:
         echo "$CONTAINER_PASSWORD" | docker login ghcr.io -u "$CONTAINER_USERNAME" --password-stdin
         wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
         sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
-        trivy image --exit-code 0 --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
+        trivy image --exit-code 1 --severity CRITICAL --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
         docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
         echo $GITHUB_REPOSITORY:$GITHUB_RUN_ID
-
-  scan:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
-    - name: Kube-linter scan
-      run: |
-        docker run -v /home/runner/work/service-example/service-example/kubelinter-config.yaml:/etc/config.yaml -v /home/runner/work/service-example/service-example/k8s:/dir stackrox/kube-linter lint /dir --config /etc/config.yaml || true
