@@ -24,7 +24,7 @@ jobs:
         sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
         trivy image --exit-code 0 --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
         docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
-        cat $GITHUB_REPOSITORY:$GITHUB_RUN_ID
+        echo $GITHUB_REPOSITORY:$GITHUB_RUN_ID
 
   scan:
     runs-on: ubuntu-latest
