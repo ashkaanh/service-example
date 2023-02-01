@@ -6,11 +6,12 @@ on:
 
 env:
   IMAGE_NAME: myapp
-  TAG: $env:GITHUB_RUN_ID
+  TAG: $GITHUB_RUN_ID
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: ContainerRegistry
     
     steps:
     - name: Login to Docker Hub
@@ -20,8 +21,8 @@ jobs:
         password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}   
     - name: Docker build
       run: |
-        docker build -t $IMAGE_NAME:$TAG app
-        docker push $IMAGE_NAME:$TAG
+        docker build -t ${{ env.IMAGE_NAME }}:${{ env.TAG }} app
+        docker push ${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
   scan:
     runs-on: ubuntu-latest
@@ -38,7 +39,7 @@ jobs:
         echo $TRIVY_VERSION
         wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -    
         docker pull myapp:$TAG
-        trivy image --exit-code 0 --no-progress $IMAGE_NAME:$TAG
+        trivy image --exit-code 0 --no-progress ${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
     - name: Kube-linter scan
       run: |
