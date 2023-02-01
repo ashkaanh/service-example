@@ -15,26 +15,23 @@ jobs:
     environment: ContainerRegistry
     
     steps:
-    - name: List
-      run: |
-        ls -la
     - name: Checkout Code
       uses: actions/checkout@v2     
     - name: Docker build and push
       run: |
-        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         docker build -t $IMAGE_NAME:$GITHUB_RUN_ID app
-        docker push $IMAGE_NAME:$GITHUB_RUN_ID
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        docker push $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_RUN_ID
 
   scan:
     runs-on: ubuntu-latest
-    
+    needs: build
     steps:
     - name: Trivy scan
       run: |
         wget --no-verbose https://github.com/aquasecurity/trivy/archive/refs/tags/v0.37.0.tar.gz -O - | tar -zxvf -
         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        docker pull $IMAGE_NAME:$GITHUB_RUN_ID
+        docker pull $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_RUN_ID
         trivy image --exit-code 0 --no-progress $IMAGE_NAME:$GITHUB_RUN_ID
 
     - name: Kube-linter scan
