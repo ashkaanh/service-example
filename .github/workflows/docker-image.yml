@@ -28,7 +28,6 @@ jobs:
     
     steps:
     - name: Trivy scan
-      uses: actions/checkout@v3
       env:
         CONTAINER_REGISTRY_USER: ${{ secrets.CONTAINER_REGISTRY_USER }}
         CONTAINER_REGISTRY_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
