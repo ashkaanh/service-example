@@ -20,22 +20,15 @@ jobs:
       run: |
         docker build -t ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID app/
         echo "$CONTAINER_PASSWORD" | docker login ghcr.io -u "$CONTAINER_USERNAME" --password-stdin
+        wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+        sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+        trivy image --exit-code 0 --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
         docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
 
   scan:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
-    - name: Trivy scan
-      run: |
-        echo "$CONTAINER_PASSWORD" | docker login ghcr.io -u "$CONTAINER_USERNAME" --password-stdin
-        docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
-        wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
-        sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
-        trivy image --exit-code 0 --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
-
     - name: Kube-linter scan
       run: |
         find . -name kubelinter-config.yaml
