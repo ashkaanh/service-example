@@ -28,8 +28,8 @@ jobs:
     steps:
     - name: Trivy scan
       run: |
-        wget --no-verbose https://github.com/aquasecurity/trivy/archive/refs/tags/v0.37.0.tar.gz -O - | tar -zxvf -
         echo "$CONTAINER_PASSWORD" | docker login ghcr.io -u "$CONTAINER_USERNAME" --password-stdin
+        wget --no-verbose https://github.com/aquasecurity/trivy/archive/refs/tags/v0.37.0.tar.gz -O - | tar -zxvf -
         docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
         trivy image --exit-code 0 --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
 
