@@ -31,5 +31,5 @@ jobs:
     steps:
     - name: Kube-linter scan
       run: |
-        find . -name kubelinter-config.yaml
+        find / -name kubelinter-config.yaml
         docker run -v kubelinter-config.yaml:/etc/config.yaml -v k8s:/dir stackrox/kube-linter lint /dir --config /etc/config.yaml || true
