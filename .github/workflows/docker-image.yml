@@ -28,8 +28,10 @@ jobs:
     steps:
     - name: Trivy scan
       run: |
-        wget --no-verbose https://github.com/aquasecurity/trivy/archive/refs/tags/v0.37.0.tar.gz -O - | tar -zxvf -
-        echo "$CONTAINER_PASSWORD" | docker login -u "$CONTAINER_USERNAME" --password-stdin
+        export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+        echo $TRIVY_VERSION
+        wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
+        echo "$CONTAINER_PASSWORD" | docker login ghcr.io -u "$CONTAINER_USERNAME" --password-stdin
         docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
         trivy image --exit-code 0 --no-progress ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
 
