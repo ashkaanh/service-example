@@ -7,8 +7,8 @@ on:
 env:
   IMAGE_NAME: myapp
   TAG: $GITHUB_RUN_ID
-  duser: ${{ secrets.CONTAINER_REGISTRY_USER }}
-  dpass: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }} 
+  DOCKER_USERNAME: ${{ secrets.CONTAINER_REGISTRY_USER }}
+  DOCKER_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }} 
 
 jobs:
   build:
@@ -16,32 +16,24 @@ jobs:
     environment: ContainerRegistry
     
     steps:
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ env.duser }}
-        password: ${{ env.dpass }}
     - name: Docker build
       run: |
-        docker build -t ${{ env.IMAGE_NAME }}:${{ env.TAG }} app
-        docker push ${{ env.IMAGE_NAME }}:${{ env.TAG }}
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        docker build -t $IMAGE_NAME:$TAG app
+        docker push $IMAGE_NAME:$TAG
 
   scan:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ env.duser }}
-        password: ${{ env.dpass }}
     - name: Trivy scan
       run: |
         export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
         echo $TRIVY_VERSION
-        wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -    
-        docker pull myapp:$TAG
-        trivy image --exit-code 0 --no-progress ${{ env.IMAGE_NAME }}:${{ env.TAG }}
+        wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        docker pull $IMAGE_NAME:$TAG
+        trivy image --exit-code 0 --no-progress $IMAGE_NAME:$TAG
 
     - name: Kube-linter scan
       run: |
