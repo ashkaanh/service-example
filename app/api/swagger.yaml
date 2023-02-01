@@ -1,0 +1,31 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Timestamp and Hostname Service"
+host: "localhost:3000"
+basePath: "/"
+schemes:
+- "http"
+paths:
+  /:
+    get:
+      summary: "Get current timestamp and hostname"
+      parameters: []
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+definitions:
+  inline_response_200:
+    type: "object"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+      hostname:
+        type: "string"
+    example:
+      hostname: "hostname"
+      timestamp: "2000-01-23T04:56:07.000+00:00"
