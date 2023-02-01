@@ -15,7 +15,6 @@ jobs:
     
     steps:
     - name: Docker build
-      uses: actions/checkout@v3
       env:
         CONTAINER_REGISTRY_USER: ${{ secrets.CONTAINER_REGISTRY_USER }}
         CONTAINER_REGISTRY_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
@@ -40,6 +39,5 @@ jobs:
         trivy image --exit-code 0 --no-progress myapp:$TAG
 
     - name: Kube-linter scan
-      uses: actions/checkout@v36
       run: |
         docker run -v kubelinter-config.yaml:/etc/config.yaml -v k8s:/dir stackrox/kube-linter lint /dir --config /etc/config.yaml || true
