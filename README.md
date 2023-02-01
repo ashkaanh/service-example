@@ -28,6 +28,7 @@ The helm chart can be used to deploy the application in a Kubernetes cluster. Th
 
 ![Kiku](img/image.png)
 
+### Deploy Helm Chart
 ``` bash
 git clone git@github.com:ashkaanh/service-example.git
 cd /k8s/charts/myapp
