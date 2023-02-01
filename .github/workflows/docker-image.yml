@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: myapp
-  TAG: ${{ env.GITHUB_SHA }}
+  TAG: $env:GITHUB_RUN_ID
   TRIVY_VERSION: latest
 
 jobs:
