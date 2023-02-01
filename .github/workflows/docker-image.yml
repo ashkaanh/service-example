@@ -19,7 +19,7 @@ jobs:
     - name: Docker build and push
       run: |
         docker build -t ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID app/
-        echo "$CONTAINER_PASSWORD" | docker login -u "$CONTAINER_USERNAME" --password-stdin
+        echo "$CONTAINER_PASSWORD" | docker login ghcr.io -u "$CONTAINER_USERNAME" --password-stdin
         docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_RUN_ID
 
   scan:
