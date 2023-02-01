@@ -15,10 +15,12 @@ jobs:
     environment: ContainerRegistry
     
     steps:
-    - name: Find
+    - name: List
       run: |
-        find . -name kubelinter-config.yaml
-    - name: Docker build
+        ls -la
+    - name: Checkout Code
+      uses: actions/checkout@v2     
+    - name: Docker build and push
       run: |
         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         docker build -t $IMAGE_NAME:$GITHUB_RUN_ID app
@@ -30,9 +32,7 @@ jobs:
     steps:
     - name: Trivy scan
       run: |
-        export TRIVY_VERSION=$(wget -qO - "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-        echo $TRIVY_VERSION
-        wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -O - | tar -zxvf -
+        wget --no-verbose https://github.com/aquasecurity/trivy/archive/refs/tags/v0.37.0.tar.gz -O - | tar -zxvf -
         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         docker pull $IMAGE_NAME:$GITHUB_RUN_ID
         trivy image --exit-code 0 --no-progress $IMAGE_NAME:$GITHUB_RUN_ID
