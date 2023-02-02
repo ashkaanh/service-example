@@ -20,7 +20,7 @@ The CI/CD pipeline includes these steps:
 ### Deploy Docker Containers
 ``` bash
 git clone git@github.com:ashkaanh/service-example.git
-cd app
+cd service-example/app
 docker compose up -d
 ```
 
@@ -38,6 +38,7 @@ The helm chart can be used to deploy the application in a Kubernetes cluster. Th
 ### Deploy Helm Chart
 ``` bash
 git clone git@github.com:ashkaanh/service-example.git
+cd service-example
 ./bootstrap.sh
 ```
 
