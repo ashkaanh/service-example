@@ -25,7 +25,7 @@ docker compose up -d
 ```
 
 ### Test
-Go to <http://<server-ip>:8080/> in your browser  or use the following command:
+Go to <http://server-ip:8080/> in your browser  or use the following command:
 ``` bash
 curl -X 'GET' <server-ip>:8080 -H 'accept: application/json'
 ```
@@ -46,7 +46,7 @@ cd service-example
 ``` bash
 kubectl port-forward -n dev-myapp service/dev-myapp 8080:8080
 ```
-Go to <http://<server-ip>:8080/> in your browser or use the following command:
+Go to <http://server-ip:8080/> in your browser or use the following command:
 ``` bash
 curl -X 'GET' <server-ip>:8080 -H 'accept: application/json'
 ```
